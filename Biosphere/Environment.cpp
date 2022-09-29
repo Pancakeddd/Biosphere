@@ -29,13 +29,13 @@ void Map::draw()
 	for_each_tile(
 		[this](size_t x, size_t y)
 		{
-			DrawCircle(x * MAP_GRID_SIZE * 2, y * MAP_GRID_SIZE * 2, MAP_GRID_SIZE, at(x, y)->tile_color);
+			at(x, y)->draw(x, y, this);
 		});
 }
 
 void Map::tick()
 {
-	for_each_tile(
+	for_each_tile_omp(
 		[this](size_t x, size_t y)
 		{
 			at(x, y)->tick(x, y, this);

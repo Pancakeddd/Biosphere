@@ -19,7 +19,14 @@ struct Map;
 struct Tile
 {
 	virtual void tick(size_t x, size_t y, Map *m) {};
+	virtual void draw(size_t x, size_t y, Map* m) {
+		if (!canDraw())
+			return;
+
+		DrawCircle(x * MAP_GRID_SIZE * 2, y * MAP_GRID_SIZE * 2, MAP_GRID_SIZE, tile_color);
+	};
 	virtual TileType getType() = 0;
+	virtual bool canDraw() = 0;
 	//virtual ~Tile() = default;
 
 	size_t frame = 0;
@@ -47,11 +54,17 @@ struct TileImplementation : Tile
 	{
 		return T::s_type;
 	}
+
+	bool canDraw()
+	{
+		return T::s_can_draw;
+	}
 };
 
 struct NoTile : TileImplementation<NoTile>
 {
 	const static TileType s_type = TileType::NONE;
+	const static bool s_can_draw = false;
 };
 
 struct Map
@@ -70,6 +83,17 @@ struct Map
 	auto for_each_tile(auto f)
 	{
 //#pragma omp parallel for
+		for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; ++i)
+		{
+			size_t y = i / MAP_WIDTH;
+			size_t x = i % MAP_WIDTH;
+			f(x, y);
+		}
+	}
+
+	auto for_each_tile_omp(auto f)
+	{
+		#pragma omp parallel for
 		for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; ++i)
 		{
 			size_t y = i / MAP_WIDTH;

@@ -1,43 +1,24 @@
 #pragma once
 
 #include <bitset>
-#include <vector>
+#include <map>
 
 #include "Prelude.h"
 
 const constexpr auto maxfrom = 5;
 const constexpr auto maxto = 5;
 
-const constexpr size_t base_genome_size = 500;
+const constexpr size_t base_genome_size = 32*8;
 
-struct Phenotype : std::bitset<base_genome_size>
-{
-	using std::bitset<base_genome_size>::bitset;
-
-	Phenotype(const std::bitset<base_genome_size>& o_genome) : std::bitset<base_genome_size>(o_genome)
-	{
-	}
-
-	Phenotype() = default;
-};
-
-struct Rule
-{
-	std::bitset<maxfrom> from_capture;
-	std::bitset<maxto> to_capture;
-	size_t from_size;
-	size_t to_size;
-};
+using Phenotype = std::bitset<base_genome_size>;
 
 struct Genome
 {
 	std::bitset<base_genome_size> genome;
-	std::vector<Rule> rules;
+	std::map<int, bool> codons;
 
-	Phenotype unfold(size_t iterations = 10);
+	Phenotype unfold();
 private:
-
-	void applyAllRules(size_t idx, const Phenotype& phenotype, Phenotype& output_phenotype);
 };
 
 template<size_t s>

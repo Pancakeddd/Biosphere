@@ -49,9 +49,6 @@ int main()
 	c2d.rotation = 0.0;
 	c2d.zoom = 1.0;
 
-	Genome g = randomGenome(0);
-	Phenotype p = g.unfold(100);
-
 	Map map;
 
 	map.create<Agent>(5, 5);
